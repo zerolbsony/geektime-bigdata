@@ -1,19 +1,14 @@
 package com.nero.geektime;
 
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.Types;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
-import org.apache.flink.table.sinks.TableSink;
+import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.expressions.TimeIntervalUnit;
+
+import static org.apache.flink.table.api.Expressions.$;
 
 public class SpendReport {
-    private static final String KAFKA_SQL = "CREATE TABLE transactions (\n" +
+    private static final String TRANSACTIONS_SQL = "CREATE TABLE transactions (\n" +
             " account_id BIGINT,\n" +
             " amount BIGINT,\n" +
             " transaction_time TIMESTAMP(3),\n" +
@@ -25,7 +20,7 @@ public class SpendReport {
             " 'format' = 'csv'\n" +
             ")";
 
-    private static final String SINK_KAFKA_SQL = "CREATE TABLE spend_report (\n" +
+    private static final String SPEND_REPORT_SQL = "CREATE TABLE spend_report (\n" +
             " account_id BIGINT,\n" +
             " log_ts TIMESTAMP(3),\n" +
             " amount BIGINT\n," +
@@ -39,7 +34,7 @@ public class SpendReport {
             " 'password' = 'demo-sql'\n" +
             ")";
 
-    public static Table report(Table transactions) {
+    /*public static Table report(Table transactions) {
         return transactions;
     }
 
@@ -84,6 +79,31 @@ public class SpendReport {
         Table transactions = report(tEnv.sqlQuery("select * from transactions"));
         executeInsert(tEnv, transactions, "spend_report");
         bsEnv.execute();
+    }*/
+
+    public static Table report(Table transactions) {
+        return transactions.select(
+                $("account_id"),
+                $("transaction_time").floor(TimeIntervalUnit.HOUR).as("log_ts"),
+                $("amount"))
+                .groupBy($("account_id"), $("log_ts"))
+                .select(
+                        $("account_id"),
+                        $("log_ts"),
+                        $("amount").sum().as("amount"));
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        EnvironmentSettings settings = EnvironmentSettings.newInstance().build();
+        TableEnvironment tEnv = TableEnvironment.create(settings);
+        //输入表transaction，用于读取信用卡交易数据，其中包含账户ID(account_id)，美元金额和时间戳
+        tEnv.executeSql(TRANSACTIONS_SQL);
+        //输出表spend_report存储聚合结果，是mysql表
+        tEnv.executeSql(SPEND_REPORT_SQL);
+        //将transactions表经过report函数处理后写入到spend_report表
+        Table transactions = tEnv.from("transactions");
+        report(transactions).executeInsert("spend_report");
     }
 
 }
