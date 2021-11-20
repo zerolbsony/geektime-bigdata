@@ -88,7 +88,7 @@ public class InvertedIndex {
 ```
 
 ### 运行结果
-![运行结果](../resource/spark01.png)
+![运行结果](../../resource/spark01.png)
 
 ## 作业二 Distcp的spark实现
 
@@ -239,4 +239,4 @@ public class Distcp {
 ```
 
 ### 运行结果
-![运行结果](../resource/spark02.png)
+![运行结果](../../resource/spark02.png)

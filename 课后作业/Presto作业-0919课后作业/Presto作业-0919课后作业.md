@@ -55,7 +55,7 @@ WHERE visit_date >= current_date - interval '7' day;
 - merge():返回聚合的 HyperLogLog
 - cardinality(): 对 HyperLogLog 进行去重计数
 
-![运行结果](../resource/presto01.png)
+![运行结果](../../resource/presto01.png)
 
 ## 作业三
 > 学习使用Presto-Jdbc库连接docker或e-mapreduce环境，重复上述查询。

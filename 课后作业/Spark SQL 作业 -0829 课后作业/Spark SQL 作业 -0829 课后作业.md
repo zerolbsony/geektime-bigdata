@@ -48,7 +48,7 @@ export PATH=$SPARK_HOME/bin:$PATH
 
 `JAVA_VERSION=1.8 SPARK_VERSION=3.2 bin/spark-sql -S`
 
-![运行结果](../resource/spark03.png)
+![运行结果](../../resource/spark03.png)
 
 
 ## 作业二
@@ -79,7 +79,7 @@ where amountPaid > 500;
 - CollapseProject
 - BooleanSimplification
 
-![运行结果](../resource/spark05.png)
+![运行结果](../../resource/spark05.png)
 
 ### 代码二
 ```sql
@@ -94,19 +94,19 @@ where amountPaid = 600;
 ```
 ### 运行结果二
 > ConstantFolding 常数折叠
-![运行结果](../resource/ConstantFolding.png)
+![运行结果](../../resource/ConstantFolding.png)
  
 > PushDownPredicates 谓词下推
-![运行结果](../resource/PushDownPredicates.png)
+![运行结果](../../resource/PushDownPredicates.png)
 
 > ReplaceDistinctWithAggregate
-![运行结果](../resource/ReplaceDistinctWithAggregate.png)
+![运行结果](../../resource/ReplaceDistinctWithAggregate.png)
 
 > ReplaceExceptWithAntiJoin
-![运行结果](../resource/ReplaceExceptWithAntiJoin.png)
+![运行结果](../../resource/ReplaceExceptWithAntiJoin.png)
 
 > FoldablePropagation 可折叠算子简化
-![运行结果](../resource/FoldablePropagation.png)
+![运行结果](../../resource/FoldablePropagation.png)
 
 ## 作业三
 ### 题目 
@@ -157,4 +157,4 @@ select customerId, amountPaid * 1 from sales;
 ```
 
 ### 运行结果
-![运行结果](../resource/spark04.png)
+![运行结果](../../resource/spark04.png)
